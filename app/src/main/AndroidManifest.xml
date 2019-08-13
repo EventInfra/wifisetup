@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="nl.eventinfra.wifisetup" android:installLocation="auto" android:versionCode="20181222" android:versionName="0.25">
+      package="nl.eventinfra.wifisetup" android:installLocation="auto" android:versionCode="20190813" android:versionName="0.26">
     <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
     <uses-feature android:name="android.hardware.wifi" android:required="true"/>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
