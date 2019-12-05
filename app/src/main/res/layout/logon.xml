@@ -27,7 +27,7 @@
 		android:contentDescription="@string/LOGO"
 		android:padding="0dp"
 		android:scaleType="fitCenter"
-		android:src="@drawable/camp19logo" />
+		android:src="@drawable/ccc36c3" />
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -42,14 +42,6 @@
 		android:layout_marginTop="15dp"
 		android:text="@string/c5ghz"/>
 	<TextView
-		android:id="@+id/label5g"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:paddingLeft="10dp"
-		android:paddingRight="10dp"
-		android:text="@string/l5ghz"
-		android:textAlignment="center" />
-	<TextView
 		android:id="@+id/labelkeystore"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -58,6 +50,21 @@
 		android:paddingRight="10dp"
 		android:text="@string/lkeystore"
 		android:textAlignment="center" />
+	<TextView
+		android:id="@+id/labelprofile"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/chooseprofile" />
+	<Spinner
+		android:id="@+id/profile"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		android:prompt="@string/profile_select"
+		android:entries="@array/profiles_array"
+		/>
 
 	<LinearLayout
 		android:id="@+id/logindata"

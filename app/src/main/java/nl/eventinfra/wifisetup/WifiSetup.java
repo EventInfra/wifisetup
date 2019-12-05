@@ -32,10 +32,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -48,7 +50,12 @@ import java.util.List;
 
 /* import android.util.Base64; */
 // API level 18 and up
-
+enum Profile {
+    PROFILE_UNFILTERED,
+    PROFILE_SITEONLY,
+    PROFILE_PROTECTME,
+    PROFILE_SPECIAL
+};
 public class WifiSetup extends Activity {
 	protected static final int SHOW_PREFERENCES = 0;
 	// FIXME This should be a configuration setting somehow
@@ -88,6 +95,8 @@ public class WifiSetup extends Activity {
 	private String s_username;
 	private String s_password;
 	private ViewFlipper flipper;
+	Profile selected_profile;
+
 
 	static String removeQuotes(String str) {
 		int len = str.length();
@@ -141,23 +150,41 @@ public class WifiSetup extends Activity {
 		}
 		*/
 
-		ImageView img = (ImageView) findViewById(R.id.logo);
-		img.setOnClickListener(new View.OnClickListener() {
+		Spinner spinner = (Spinner) findViewById(R.id.profile);
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
-			public void onClick(View view) {
-				logoclicks++;
-				if (logoclicks == 4) {
-					toastText("You're cute!");
-				}
-				if (logoclicks == 6) {
-					toastText("Stop that!");
-				}
-				if (logoclicks == 7) {
-					View logindata = findViewById(R.id.logindata);
-					logindata.setVisibility(View.VISIBLE);
-				}
+			public void onItemSelected(AdapterView<?> parent, View v, int position,
+									   long id) {
+                View logindata = findViewById(R.id.logindata);;
+                logindata.setVisibility(View.INVISIBLE);
+				switch((int) id) {
+                    case 0:
+                        selected_profile = Profile.PROFILE_UNFILTERED;
+                        toastText("Don't filter me!");
+                        break;
+                    case 1:
+                        selected_profile = Profile.PROFILE_SITEONLY;
+                        toastText("You trust people on-site more than the internet! Thank you!");
+                        break;
+                    case 2:
+                        selected_profile = Profile.PROFILE_PROTECTME;
+                        toastText("You don't trust anyone? Or maybe not your device?");
+                        break;
+                    case 3:
+                        selected_profile = Profile.PROFILE_SPECIAL;
+                        logindata.setVisibility(View.VISIBLE);
+                        toastText("Hi fellow special person!");
+                        break;
+
+
+                }
 			}
-		});
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+	    });
 
 		btn = (Button) findViewById(R.id.button1);
 		if (btn == null)
@@ -233,25 +260,37 @@ public class WifiSetup extends Activity {
 		}
 
 		if (check5g.isChecked()) {
-			ssid = "Camp2019";
+			ssid = "36C3";
 		} else {
-			ssid = "Camp2019-legacy";
+			ssid = "36C3-legacy";
 		}
 		subject_match = "/CN=radius.c3noc.net";
 		altsubject_match = "DNS:radius.c3noc.net";
 
-		s_username = username.getText().toString();
-		s_password = password.getText().toString();
+
 		realm = "";
-		if (s_username.equals("") && s_password.equals("")) {
-			s_username = "Camp2019";
-			s_password = "Camp2019";
-		} else {
-			if (s_username.contains("@")) {
-				int idx = s_username.indexOf("@");
-				realm = s_username.substring(idx);
-			}
-		}
+        switch(selected_profile) {
+            case PROFILE_UNFILTERED:
+                s_username = "36C3";
+                s_password = "36C3";
+                break;
+            case PROFILE_SITEONLY:
+                s_username = "congressonly";
+                s_password = "congressonly";
+                break;
+            case PROFILE_PROTECTME:
+                s_username = "outboundonly";
+                s_password = "outboundonly";
+                break;
+            case PROFILE_SPECIAL:
+                s_username = username.getText().toString();
+                s_password = password.getText().toString();
+                if (s_username.contains("@")) {
+                    int idx = s_username.indexOf("@");
+                    realm = s_username.substring(idx);
+                }
+                break;
+        }
 
 
 		// Use the existing ssid profile if it exists.
@@ -365,7 +404,7 @@ public class WifiSetup extends Activity {
 	    	builder.setMessage(getString(R.string.ABOUT_CONTENT)+
 					"\n\n"+pi.packageName+"\n"+
 					"V"+pi.versionName+
-					"C"+pi.versionCode+"-equi");
+					"C"+pi.versionCode+"-syn");
 			builder.setPositiveButton(getString(android.R.string.ok), null);
 			builder.show();
 
