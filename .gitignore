@@ -3,3 +3,6 @@
 build
 app/build
 app/release
+*.iml
+local.properties
+*.swp
