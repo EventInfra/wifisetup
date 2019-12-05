@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 28
     buildToolsVersion "27.0.2"
 
     defaultConfig {
         applicationId "nl.eventinfra.wifisetup"
         minSdkVersion 18
-        targetSdkVersion 26
+        targetSdkVersion 28
     }
 
     buildTypes {
