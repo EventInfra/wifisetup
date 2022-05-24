@@ -137,10 +137,10 @@ public class WifiSetup extends Activity {
 		username = (EditText) findViewById(R.id.username);
 		password = (EditText) findViewById(R.id.password);
 
-
+		/*
 		check5g = (CheckBox) findViewById(R.id.check5g);
 		check5g.setChecked(true);
-		/*
+
 		TextView label5g = (TextView) findViewById(R.id.label5g);
 		if (android.os.Build.VERSION.SDK_INT >= 21) {
 			check5g.setChecked(get5G());
@@ -273,13 +273,15 @@ public class WifiSetup extends Activity {
 		StoreWifiProfile(ssid, subject_match, altsubject_match, s_username, s_password);
 
         // MCH2022
-		if (check5g.isChecked()) {
+
+		/*if (check5g.isChecked()) {
 			ssid = "MCH2022";
 		} else {
 			ssid = "MCH2022-legacy";
-		}
-		subject_match = "/CN=radius.mch2022.nl";
-		altsubject_match = "DNS:radius.mch2022.nl";
+		}*/
+		ssid = "MCH2022";
+		subject_match = "/CN=radius.mch2022.org";
+		altsubject_match = "DNS:radius.mch2022.org";
 
 		realm = "";
 		switch (selected_profile) {
