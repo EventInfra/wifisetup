@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="profiles_array">
-        <item>Enable me - no filters = full inbound/outbound</item>
         <item>Enable me on-site = outbound only, inbound from event</item>
+        <item>Enable me - no filters = full inbound/outbound</item>
         <item>Protect me = outbound traffic only</item>
         <item>I am special = custom username/password</item>
     </string-array>

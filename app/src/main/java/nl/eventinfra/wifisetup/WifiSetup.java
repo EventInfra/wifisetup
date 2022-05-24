@@ -137,6 +137,7 @@ public class WifiSetup extends Activity {
 		username = (EditText) findViewById(R.id.username);
 		password = (EditText) findViewById(R.id.password);
 
+
 		check5g = (CheckBox) findViewById(R.id.check5g);
 		check5g.setChecked(true);
 		/*
@@ -158,14 +159,15 @@ public class WifiSetup extends Activity {
                 View logindata = findViewById(R.id.logindata);;
                 logindata.setVisibility(View.INVISIBLE);
 				switch((int) id) {
-                    case 0:
+					case 0:
+						selected_profile = Profile.PROFILE_SITEONLY;
+						toastText("You trust people on-site more than the internet! Thank you!");
+						break;
+                    case 1:
                         selected_profile = Profile.PROFILE_UNFILTERED;
                         toastText("Don't filter me!");
                         break;
-                    case 1:
-                        selected_profile = Profile.PROFILE_SITEONLY;
-                        toastText("You trust people on-site more than the internet! Thank you!");
-                        break;
+
                     case 2:
                         selected_profile = Profile.PROFILE_PROTECTME;
                         toastText("You don't trust anyone? Or maybe not your device?");
@@ -240,6 +242,71 @@ public class WifiSetup extends Activity {
 	}
 
 	private void saveWifiConfig() {
+
+
+		subject_match = "/CN=radius.emf.camp";
+		altsubject_match = "DNS:radius.emf.camp";
+
+		realm = "";
+		switch (selected_profile) {
+			case PROFILE_UNFILTERED:
+				s_username = "allowany";
+				s_password = "allowany";
+				break;
+			case PROFILE_SITEONLY:
+				s_username = "emf";
+				s_password = "emf";
+				break;
+			case PROFILE_PROTECTME:
+				s_username = "outboundonly";
+				s_password = "outboundonly";
+				break;
+			case PROFILE_SPECIAL:
+				s_username = username.getText().toString();
+				s_password = password.getText().toString();
+				if (s_username.contains("@")) {
+					int idx = s_username.indexOf("@");
+					realm = s_username.substring(idx);
+				}
+				break;
+		}
+		StoreWifiProfile(ssid, subject_match, altsubject_match, s_username, s_password);
+
+        // MCH2022
+		if (check5g.isChecked()) {
+			ssid = "MCH2022";
+		} else {
+			ssid = "MCH2022-legacy";
+		}
+		subject_match = "/CN=radius.mch2022.nl";
+		altsubject_match = "DNS:radius.mch2022.nl";
+
+		realm = "";
+		switch (selected_profile) {
+			case PROFILE_UNFILTERED:
+				s_username = "allowany";
+				s_password = "allowany";
+				break;
+			case PROFILE_SITEONLY:
+				s_username = "mch2022";
+				s_password = "mch2022";
+				break;
+			case PROFILE_PROTECTME:
+				s_username = "outboundonly";
+				s_password = "outboundonly";
+				break;
+			case PROFILE_SPECIAL:
+				s_username = username.getText().toString();
+				s_password = password.getText().toString();
+				if (s_username.contains("@")) {
+					int idx = s_username.indexOf("@");
+					realm = s_username.substring(idx);
+				}
+				break;
+		}
+		StoreWifiProfile(ssid, subject_match, altsubject_match, s_username, s_password);
+	}
+	void StoreWifiProfile(String ssid, String subject_match, String altsubject_match, String s_username, String s_password) {
 		WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(WIFI_SERVICE);
 		if (wifiManager == null) {
 			return;
@@ -253,46 +320,10 @@ public class WifiSetup extends Activity {
 			configs = wifiManager.getConfiguredNetworks();
 			try {
 				Thread.sleep(1);
-			}
-			catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				// Do nothing ;-)
 			}
 		}
-
-		if (check5g.isChecked()) {
-			ssid = "36C3";
-		} else {
-			ssid = "36C3-legacy";
-		}
-		subject_match = "/CN=radius.c3noc.net";
-		altsubject_match = "DNS:radius.c3noc.net";
-
-
-		realm = "";
-        switch(selected_profile) {
-            case PROFILE_UNFILTERED:
-                s_username = "36C3";
-                s_password = "36C3";
-                break;
-            case PROFILE_SITEONLY:
-                s_username = "congressonly";
-                s_password = "congressonly";
-                break;
-            case PROFILE_PROTECTME:
-                s_username = "outboundonly";
-                s_password = "outboundonly";
-                break;
-            case PROFILE_SPECIAL:
-                s_username = username.getText().toString();
-                s_password = password.getText().toString();
-                if (s_username.contains("@")) {
-                    int idx = s_username.indexOf("@");
-                    realm = s_username.substring(idx);
-                }
-                break;
-        }
-
-
 		// Use the existing ssid profile if it exists.
 		boolean ssidExists = false;
 		if (configs != null) {
@@ -304,7 +335,6 @@ public class WifiSetup extends Activity {
 				}
 			}
 		}
-
 		currentConfig.SSID = surroundWithQuotes(ssid);
 		currentConfig.hiddenSSID = false;
 		currentConfig.priority = 40;
