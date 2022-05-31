@@ -15,16 +15,19 @@
 
 package nl.eventinfra.wifisetup;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiEnterpriseConfig.Eap;
 import android.net.wifi.WifiEnterpriseConfig.Phase2;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiNetworkSuggestion;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +48,8 @@ import android.widget.ViewFlipper;
 import java.io.InputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -201,9 +206,11 @@ public class WifiSetup extends Activity {
 
 				// Most of this stuff runs in the background
 				Thread t = new Thread() {
+
 					@Override
 					public void run() {
 						try {
+
 							if (android.os.Build.VERSION.SDK_INT >= 18) {
 								saveWifiConfig();
 								resultStatus(true, "You should now have a wifi connection entry with correct security settings and certificate verification.\n\nMake sure to actually use it!");
@@ -243,9 +250,13 @@ public class WifiSetup extends Activity {
 
 	private void saveWifiConfig() {
 
+		ssid = "emfcamp";
 
 		subject_match = "/CN=radius.emf.camp";
 		altsubject_match = "DNS:radius.emf.camp";
+//		subject_match = "/CN=radius.synnack.net";
+//		altsubject_match = "DNS:radius.synnack.net";
+
 
 		realm = "";
 		switch (selected_profile) {
@@ -280,8 +291,8 @@ public class WifiSetup extends Activity {
 			ssid = "MCH2022-legacy";
 		}*/
 		ssid = "MCH2022";
-		subject_match = "/CN=radius.mch2022.org";
-		altsubject_match = "DNS:radius.mch2022.org";
+		subject_match = "/CN=radius.eventinfra.org";
+		altsubject_match = "DNS:radius.eventinfra.org";
 
 		realm = "";
 		switch (selected_profile) {
@@ -309,13 +320,40 @@ public class WifiSetup extends Activity {
 		StoreWifiProfile(ssid, subject_match, altsubject_match, s_username, s_password);
 	}
 	void StoreWifiProfile(String ssid, String subject_match, String altsubject_match, String s_username, String s_password) {
+
+
+		// Enterprise Settings
+		HashMap<String,String> configMap = new HashMap<>();
+		configMap.put(INT_SUBJECT_MATCH, subject_match);
+		configMap.put(INT_ALTSUBJECT_MATCH, altsubject_match);
+		configMap.put(INT_ANONYMOUS_IDENTITY, "anonymous" + realm);
+		configMap.put(INT_IDENTITY, s_username);
+		configMap.put(INT_PASSWORD, s_password);
+		configMap.put(INT_EAP, "TTLS");
+		configMap.put(INT_PHASE2, "auth=PAP");
+		configMap.put(INT_ENGINE, "0");
+
 		WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(WIFI_SERVICE);
 		if (wifiManager == null) {
 			return;
 		}
+		WifiConfiguration currentConfig = new WifiConfiguration();
+
+		if (android.os.Build.VERSION.SDK_INT >= 29) {
+			try {
+
+				WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
+						.setSsid(ssid)
+						.setWpa2EnterpriseConfig(applyAndroid43EnterpriseSettings(configMap)).build();
+				wifiManager.addNetworkSuggestions(Arrays.asList(suggestion));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+
 		wifiManager.setWifiEnabled(true);
 
-		WifiConfiguration currentConfig = new WifiConfiguration();
 
 		List<WifiConfiguration> configs = null;
 		for (int i = 0; i < 10 && configs == null; i++) {
@@ -337,6 +375,10 @@ public class WifiSetup extends Activity {
 				}
 			}
 		}
+		// This sets the CA certificate.
+		currentConfig.enterpriseConfig = applyAndroid43EnterpriseSettings(configMap);
+
+		// General (old) config settings
 		currentConfig.SSID = surroundWithQuotes(ssid);
 		currentConfig.hiddenSSID = false;
 		currentConfig.priority = 40;
@@ -364,19 +406,6 @@ public class WifiSetup extends Activity {
 		currentConfig.allowedProtocols.clear();
 		currentConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 
-		// Enterprise Settings
-		HashMap<String,String> configMap = new HashMap<>();
-		configMap.put(INT_SUBJECT_MATCH, subject_match);
-		configMap.put(INT_ALTSUBJECT_MATCH, altsubject_match);
-		configMap.put(INT_ANONYMOUS_IDENTITY, "anonymous" + realm);
-		configMap.put(INT_IDENTITY, s_username);
-		configMap.put(INT_PASSWORD, s_password);
-		configMap.put(INT_EAP, "TTLS");
-		configMap.put(INT_PHASE2, "auth=PAP");
-		configMap.put(INT_ENGINE, "0");
-
-		// This sets the CA certificate.
-		applyAndroid43EnterpriseSettings(currentConfig, configMap);
 
 		if (!ssidExists) {
 			int networkId = wifiManager.addNetwork(currentConfig);
@@ -390,7 +419,7 @@ public class WifiSetup extends Activity {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private void applyAndroid43EnterpriseSettings(WifiConfiguration currentConfig, HashMap<String,String> configMap) {
+	private WifiEnterpriseConfig applyAndroid43EnterpriseSettings(HashMap<String,String> configMap) {
 		try {
 			CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
 			InputStream in = getResources().openRawResource(R.raw.cacert);
@@ -406,11 +435,14 @@ public class WifiSetup extends Activity {
 			enterpriseConfig.setIdentity(s_username);
 			enterpriseConfig.setPassword(s_password);
 			enterpriseConfig.setSubjectMatch(configMap.get(INT_SUBJECT_MATCH));
-			currentConfig.enterpriseConfig = enterpriseConfig;
+			enterpriseConfig.setAltSubjectMatch(configMap.get(INT_ALTSUBJECT_MATCH));
 
+			return enterpriseConfig;
 		} catch(Exception e) {
 			e.printStackTrace();
+			return null;
 		}
+
 	}
 
 	@Override

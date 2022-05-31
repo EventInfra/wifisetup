@@ -36,11 +36,11 @@
 		android:autoLink="web"
 		android:text="@string/twitter"/>
 
-	<CheckBox android:id="@+id/check5g"
+	<!--<CheckBox android:id="@+id/check5g"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="15dp"
-		android:text="@string/c5ghz"/>
+		android:text="@string/c5ghz"/>-->
 	<TextView
 		android:id="@+id/labelkeystore"
 		android:layout_width="wrap_content"
