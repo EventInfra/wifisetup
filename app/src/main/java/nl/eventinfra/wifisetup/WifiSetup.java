@@ -15,13 +15,11 @@
 
 package nl.eventinfra.wifisetup;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiEnterpriseConfig.Eap;
@@ -39,7 +37,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +45,6 @@ import android.widget.ViewFlipper;
 import java.io.InputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +56,8 @@ enum Profile {
     PROFILE_SITEONLY,
     PROFILE_PROTECTME,
     PROFILE_SPECIAL
-};
+}
+
 public class WifiSetup extends Activity {
 	protected static final int SHOW_PREFERENCES = 0;
 	// FIXME This should be a configuration setting somehow
@@ -138,9 +135,9 @@ public class WifiSetup extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.logon);
 
-		flipper = (ViewFlipper) findViewById(R.id.viewflipper);
-		username = (EditText) findViewById(R.id.username);
-		password = (EditText) findViewById(R.id.password);
+        flipper = findViewById(R.id.viewflipper);
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
 
 		/*
 		check5g = (CheckBox) findViewById(R.id.check5g);
@@ -156,12 +153,12 @@ public class WifiSetup extends Activity {
 		}
 		*/
 
-		Spinner spinner = (Spinner) findViewById(R.id.profile);
+        Spinner spinner = findViewById(R.id.profile);
 		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v, int position,
 									   long id) {
-                View logindata = findViewById(R.id.logindata);;
+                View logindata = findViewById(R.id.logindata);
                 logindata.setVisibility(View.INVISIBLE);
 				switch((int) id) {
 					case 0:
@@ -193,7 +190,7 @@ public class WifiSetup extends Activity {
             }
 	    });
 
-		btn = (Button) findViewById(R.id.button1);
+        btn = findViewById(R.id.button1);
 		if (btn == null)
 			throw new RuntimeException("button1 not found. Odd");
 		btn.setOnClickListener(new Button.OnClickListener() {
@@ -249,7 +246,7 @@ public class WifiSetup extends Activity {
 	}
 
 	private void saveWifiConfig() {
-
+/*
 		ssid = "emfcamp";
 
 		subject_match = "/CN=radius.emf.camp";
@@ -282,17 +279,17 @@ public class WifiSetup extends Activity {
 				break;
 		}
 		StoreWifiProfile(ssid, subject_match, altsubject_match, s_username, s_password);
-
-        // MCH2022
+*/
+        // CCC Camp2023
 
 		/*if (check5g.isChecked()) {
 			ssid = "MCH2022";
 		} else {
 			ssid = "MCH2022-legacy";
 		}*/
-		ssid = "MCH2022";
-		subject_match = "/CN=radius.eventinfra.org";
-		altsubject_match = "DNS:radius.eventinfra.org";
+        ssid = "Camp2023";
+        subject_match = "/CN=radius.c3noc.net";
+        altsubject_match = "DNS:radius.c3noc.net";
 
 		realm = "";
 		switch (selected_profile) {
@@ -301,8 +298,8 @@ public class WifiSetup extends Activity {
 				s_password = "allowany";
 				break;
 			case PROFILE_SITEONLY:
-				s_username = "mch2022";
-				s_password = "mch2022";
+                s_username = "camp";
+                s_password = "camp";
 				break;
 			case PROFILE_PROTECTME:
 				s_username = "outboundonly";
@@ -484,8 +481,8 @@ public class WifiSetup extends Activity {
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				TextView res_title = (TextView) findViewById(R.id.resulttitle);
-				TextView res_text = (TextView) findViewById(R.id.result);
+                TextView res_title = findViewById(R.id.resulttitle);
+                TextView res_text = findViewById(R.id.result);
 
 				System.out.println(text);
 				res_text.setText(text);

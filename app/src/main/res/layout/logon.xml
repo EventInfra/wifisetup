@@ -24,10 +24,10 @@
         android:id="@+id/logo"
         android:layout_width="fill_parent"
 		android:layout_height="200dp"
-		android:contentDescription="EMF logo"
+		android:contentDescription="CCCamp23 logo"
 		android:padding="0dp"
 		android:scaleType="fitCenter"
-		android:src="@drawable/emfmch2022" />
+		android:src="@drawable/camp23logo" />
 
 	<TextView
 		android:layout_width="wrap_content"
