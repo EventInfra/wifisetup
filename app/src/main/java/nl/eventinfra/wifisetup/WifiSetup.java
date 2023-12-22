@@ -280,14 +280,13 @@ public class WifiSetup extends Activity {
 		}
 		StoreWifiProfile(ssid, subject_match, altsubject_match, s_username, s_password);
 */
-        // CCC Camp2023
 
 		/*if (check5g.isChecked()) {
 			ssid = "MCH2022";
 		} else {
 			ssid = "MCH2022-legacy";
 		}*/
-        ssid = "Camp2023";
+		ssid = "37C3";
         subject_match = "/CN=radius.c3noc.net";
         altsubject_match = "DNS:radius.c3noc.net";
 
@@ -298,8 +297,8 @@ public class WifiSetup extends Activity {
 				s_password = "allowany";
 				break;
 			case PROFILE_SITEONLY:
-                s_username = "camp";
-                s_password = "camp";
+				s_username = "37c3";
+				s_password = "37c3";
 				break;
 			case PROFILE_PROTECTME:
 				s_username = "outboundonly";

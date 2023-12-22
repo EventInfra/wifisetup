@@ -24,10 +24,10 @@
         android:id="@+id/logo"
         android:layout_width="fill_parent"
 		android:layout_height="200dp"
-		android:contentDescription="CCCamp23 logo"
+		android:contentDescription="37C3 logo"
 		android:padding="0dp"
 		android:scaleType="fitCenter"
-		android:src="@drawable/camp23logo" />
+		android:src="@drawable/ccc37c3logo" />
 
 	<TextView
 		android:layout_width="wrap_content"
