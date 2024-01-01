@@ -7,7 +7,7 @@
 	<string name="Password">password</string>
 	<string name="Logon">Create connection entry</string>
 
-	<string name="twitter">https://twitter.com/c3noc</string>
+	<string name="fediverse">https://chaos.social/@c3noc</string>
 
 	<string name="c5ghz">This device supports the 5GHz band</string>
 	<string name="l5ghz">(Unfortunately, autodetecting 5GHz support is broken&#8230;)</string>
