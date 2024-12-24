@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">37C3 Wifi Setup</string>
+	<string name="app_name">38C3 Wifi Setup</string>
 
 	<string name="TITLE_LOGON">Please logon</string>
 	<string name="Username">username@realm</string>
